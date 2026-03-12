@@ -48,6 +48,7 @@ two-tier-flask-app
 │
 ├── app.py
 ├── Dockerfile
+├── Dockerfile-multistage
 ├── docker-compose.yml
 ├── requirements.txt
 ├── README.md
