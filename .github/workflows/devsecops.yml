@@ -35,10 +35,11 @@ jobs:
       - name: Push Image
         run: docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
 
-  Trivy-scan:
+
+  Trivy-image-scan:
     needs: build
     uses: ./.github/workflows/Trivy-image-scan.yml
 
   deploy:
-    needs: Trivy-image-scan.yml
+    needs: Trivy-image-scan
     uses: ./.github/workflows/deploy.yml
