@@ -50,4 +50,8 @@ def submit():
 
 if __name__ == '__main__':
     init_db()
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    
+    host_ip = os.environ.get('APP_HOST', '127.0.0.1')
+    debug_mode = os.environ.get('APP_DEBUG', 'False').lower() == 'true'
+
+    app.run(host=host_ip, port=5000, debug=debug_mode)
