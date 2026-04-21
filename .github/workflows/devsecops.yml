@@ -1,0 +1,44 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  code-quality:
+    uses: ./.github/workflows/code-quality.yml
+
+  secrets-scan:
+    uses: ./.github/workflows/secrets-scan.yml
+
+  dependency-scan:
+    uses: ./.github/workflows/dependency-scan.yml
+
+  docker-lint:
+    uses: ./.github/workflows/docker-lint.yml
+
+  tests:
+    uses: ./.github/workflows/test.yml
+
+  build:
+    needs: [code-quality, secrets-scan, dependency-scan, docker-lint, tests]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+      - name: Build Image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/flask-app:latest .
+
+      - name: Push Image
+        run: docker push ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
+
+  Trivy-scan:
+    needs: build
+    uses: ./.github/workflows/Trivy-image-scan.yml
+
+  deploy:
+    needs: Trivy-image-scan.yml
+    uses: ./.github/workflows/deploy.yml

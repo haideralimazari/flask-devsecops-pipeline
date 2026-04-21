@@ -1,0 +1,21 @@
+name: Deploy
+
+on:
+  workflow_call:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH Deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ubuntu
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd two-tier-flask-app
+            docker pull ${{ secrets.DOCKER_USERNAME }}/flask-app:latest
+            docker-compose down
+            docker-compose up -d
