@@ -55,3 +55,4 @@ if __name__ == '__main__':
     debug_mode = os.environ.get('APP_DEBUG', 'False').lower() == 'true'
 
     app.run(host=host_ip, port=5000, debug=debug_mode)
+
